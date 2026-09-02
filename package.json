@@ -1,0 +1,25 @@
+{
+  "name": "lightmail",
+  "version": "1.0.0",
+  "description": "Lightweight local email client",
+  "author": "Ritche Gerona",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "jest",
+    "prestart": "lsof -ti:3000 | xargs -r kill || true",
+    "start": "bash -c 'unset npm_config_prefix; export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20 >/dev/null && node server/index.js'",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "imapflow": "^1.0.100",
+    "multer": "^2.2.0",
+    "nodemailer": "^6.9.7",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
+  }
+}

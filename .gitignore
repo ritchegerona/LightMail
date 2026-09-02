@@ -1,0 +1,8 @@
+node_modules/
+.env
+data/mail.db
+*.log
+.remember/
+fix.sh
+patch.sh
+update.sh

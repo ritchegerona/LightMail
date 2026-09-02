@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>LightMail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;550;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ═══════════ SVG icon sprite (referenced via <use href="#i-*">) ═══════════ -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-draft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.99 19a2 2 0 0 1-1.99-2V5a2 2 0 0 1 2-2h4l4 4v10a2 2 0 0 1-2 2z"/><path d="M17 3v4h4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
+    <symbol id="i-reply" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></symbol>
+    <symbol id="i-forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></symbol>
+    <symbol id="i-compose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6" opacity="0"/><path d="M12 3a9 9 0 0 0 0 18v-18z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-mail-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="m6 18 5.5-4.5a2 2 0 0 1 2.5 0L19 18"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h0M10 10h0M14 10h0M18 10h0M6 14h0M18 14h0M9 14h6" stroke-width="2"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+    <symbol id="i-restore" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></symbol>
+  </svg>
+
+  <div id="app">
+    <!-- ═══════════ Sidebar ═══════════ -->
+    <aside id="sidebar">
+      <div class="logo-row">
+        <div class="logo">
+          <span class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="3"/>
+              <path d="m2 7 10 6L22 7"/>
+            </svg>
+          </span>
+          LightMail
+        </div>
+        <button id="theme-btn" class="side-icon-btn" aria-label="Toggle theme" title="Theme: system">
+          <span class="ic-wrap" data-theme-icon></span>
+        </button>
+      </div>
+
+      <button id="add-account-btn" class="btn-outline"><span class="ic-wrap" data-icon="plus"></span>Add Account</button>
+
+      <div class="side-label">Accounts</div>
+      <nav id="account-list" aria-label="Accounts"></nav>
+
+      <hr class="side-divider" />
+      <div class="side-label">Folders</div>
+      <nav id="folder-list" aria-label="Mailboxes"></nav>
+
+      <div class="spacer"></div>
+      <button id="compose-btn" class="btn-primary">
+        <span class="ic-wrap" data-icon="compose"></span>
+        Compose
+        <kbd class="compose-kbd">C</kbd>
+      </button>
+      <footer class="side-footer">
+        LightMail · crafted by <strong>Ritche Gerona</strong>
+      </footer>
+    </aside>
+
+    <!-- ═══════════ Main list ═══════════ -->
+    <main id="main">
+      <header id="toolbar">
+        <div class="toolbar-left">
+          <button id="menu-btn" class="icon-btn" aria-label="Menu"><span class="ic-wrap" data-icon="menu"></span></button>
+          <div id="bulk-bar" class="bulk-bar hidden" role="toolbar" aria-label="Bulk actions">
+            <label class="check-all-wrap" title="Select all">
+              <input type="checkbox" id="select-all" aria-label="Select all emails" />
+            </label>
+            <span id="bulk-count" class="bulk-count">0 selected</span>
+            <button class="bulk-action" data-bulk="read">Mark read</button>
+            <button class="bulk-action" data-bulk="unread">Mark unread</button>
+            <button class="bulk-action" data-bulk="star">Star</button>
+            <button class="bulk-action danger" data-bulk="delete">Delete</button>
+            <button class="bulk-action ghost" data-bulk="cancel" aria-label="Clear selection"><span class="ic-wrap" data-icon="x"></span></button>
+          </div>
+          <h2 id="folder-title">Inbox</h2>
+          <span id="folder-count"></span>
+        </div>
+        <div class="toolbar-actions">
+          <div class="search-wrap">
+            <span class="ic-wrap search-ic" data-icon="search"></span>
+            <input type="text" id="search-input" placeholder="Search mail…" aria-label="Search mail" />
+          </div>
+          <button id="shortcuts-btn" class="icon-btn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"><span class="ic-wrap" data-icon="keyboard"></span></button>
+          <button id="sync-btn" class="icon-btn" title="Sync now" aria-label="Sync now"><span class="ic-wrap" data-icon="sync"></span></button>
+        </div>
+      </header>
+      <div id="email-list" role="list" aria-live="polite"></div>
+    </main>
+
+    <!-- ═══════════ Reading pane ═══════════ -->
+    <section id="detail-pane" aria-label="Message">
+      <div id="detail-resize" title="Drag to resize · double-click to reset" aria-hidden="true"></div>
+      <div id="detail-content"></div>
+    </section>
+
+    <!-- ═══════════ Compose slide-over ═══════════ -->
+    <section id="compose-panel" class="hidden" aria-label="Compose message">
+      <header class="cp-header">
+        <h3 id="cp-title">New Message</h3>
+        <div class="cp-header-actions">
+          <button id="cp-full" class="icon-btn sm" title="Toggle full view" aria-label="Toggle composer full view"><span class="ic-wrap" data-icon="expand"></span></button>
+          <button id="cp-minimize" class="icon-btn sm" title="Minimize" aria-label="Minimize composer"><span class="ic-wrap" data-icon="minus"></span></button>
+          <button id="cp-close" class="icon-btn sm" title="Discard & close" aria-label="Close composer"><span class="ic-wrap" data-icon="x"></span></button>
+        </div>
+      </header>
+      <form id="compose-form" class="cp-body">
+        <div class="cp-field cp-to-row">
+          <label for="compose-to">To</label>
+          <input type="text" id="compose-to" placeholder="recipient@example.com" autocomplete="off" required />
+          <button type="button" id="cp-show-cc" class="cp-mini-link">Cc</button>
+          <button type="button" id="cp-show-bcc" class="cp-mini-link">Bcc</button>
+        </div>
+        <div class="cp-field hidden" id="cp-cc-row">
+          <label for="compose-cc">Cc</label>
+          <input type="text" id="compose-cc" placeholder="cc@example.com" autocomplete="off" />
+        </div>
+        <div class="cp-field hidden" id="cp-bcc-row">
+          <label for="compose-bcc">Bcc</label>
+          <input type="text" id="compose-bcc" placeholder="bcc@example.com" autocomplete="off" />
+        </div>
+        <div class="cp-field cp-subject-row">
+          <input type="text" id="compose-subject" placeholder="Subject" autocomplete="off" required />
+        </div>
+        <ul id="compose-atts" class="cp-atts" aria-label="Attachments"></ul>
+        <textarea id="compose-body" placeholder="Write your message…"></textarea>
+        <footer class="cp-footer">
+          <input type="file" id="compose-files" multiple hidden />
+          <button type="button" id="cp-attach" class="icon-btn" title="Attach files" aria-label="Attach files"><span class="ic-wrap" data-icon="clip"></span></button>
+          <span id="cp-status" class="cp-status"></span>
+          <span class="cp-footer-spacer"></span>
+          <button type="button" id="cp-discard" class="btn-ghost sm">Discard</button>
+          <button type="button" id="cp-save-draft" class="btn-ghost sm">Save draft</button>
+          <button type="submit" id="cp-send" class="btn-primary sm">
+            <span class="ic-wrap" data-icon="send"></span> Send
+          </button>
+        </footer>
+      </form>
+    </section>
+    <button id="compose-pill" class="compose-pill hidden" aria-label="Restore composer">
+      <span class="ic-wrap" data-icon="compose"></span><span id="compose-pill-text">Draft</span>
+    </button>
+  </div>
+
+  <!-- ═══════════ Account Modal ═══════════ -->
+  <div id="account-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="account-modal-title">
+    <div class="modal-content">
+      <button class="close icon-btn sm" aria-label="Close"><span class="ic-wrap" data-icon="x"></span></button>
+      <h3 id="account-modal-title">Add Email Account</h3>
+      <p class="modal-sub">Connect an IMAP/SMTP mailbox to start reading and sending.</p>
+      <form id="account-form">
+        <div class="field">
+          <label for="acc-email">Email address</label>
+          <input type="email" id="acc-email" placeholder="you@example.com" required />
+        </div>
+        <div class="field">
+          <label for="acc-password">Password</label>
+          <input type="password" id="acc-password" placeholder="••••••••••••" required />
+        </div>
+        <div class="modal-hint">
+          <span class="ic-wrap hint-ic" data-icon="alert"></span>
+          <span>Gmail/Google users: enable 2FA and use an <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener">App Password</a>.</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="acc-imap-host">IMAP host</label>
+            <input type="text" id="acc-imap-host" placeholder="imap.gmail.com" required />
+          </div>
+          <div class="field">
+            <label for="acc-imap-port">IMAP port</label>
+            <input type="number" id="acc-imap-port" placeholder="993" required />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="acc-smtp-host">SMTP host</label>
+            <input type="text" id="acc-smtp-host" placeholder="smtp.gmail.com" required />
+          </div>
+          <div class="field">
+            <label for="acc-smtp-port">SMTP port</label>
+            <input type="number" id="acc-smtp-port" placeholder="465 / 587" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary">Add Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════ Update Password Modal ═══════════ -->
+  <div id="password-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
+    <div class="modal-content">
+      <button class="close icon-btn sm" aria-label="Close"><span class="ic-wrap" data-icon="x"></span></button>
+      <h3 id="pw-modal-title">Update Password</h3>
+      <p class="modal-sub">for <strong id="pw-account-email"></strong></p>
+      <form id="password-form">
+        <div class="modal-hint">
+          <span class="ic-wrap hint-ic" data-icon="alert"></span>
+          <span>Gmail/Google: create an App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> and paste the 16-character code here.</span>
+        </div>
+        <div class="field">
+          <label for="pw-password">New password</label>
+          <input type="password" id="pw-password" placeholder="Paste app password…" required />
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary">Save &amp; Re-sync</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════ Shortcuts Modal ═══════════ -->
+  <div id="shortcuts-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="sc-modal-title">
+    <div class="modal-content sc-modal">
+      <button class="close icon-btn sm" aria-label="Close"><span class="ic-wrap" data-icon="x"></span></button>
+      <h3 id="sc-modal-title">Keyboard shortcuts</h3>
+      <div class="sc-grid">
+        <div class="sc-item"><kbd>C</kbd> Compose new message</div>
+        <div class="sc-item"><kbd>J</kbd> / <kbd>K</kbd> Next / previous email</div>
+        <div class="sc-item"><kbd>Enter</kbd> Open selected email</div>
+        <div class="sc-item"><kbd>R</kbd> Reply to open email</div>
+        <div class="sc-item"><kbd>F</kbd> Forward open email</div>
+        <div class="sc-item"><kbd>S</kbd> Star / unstar selection</div>
+        <div class="sc-item"><kbd>E</kbd> Delete selection</div>
+        <div class="sc-item"><kbd>/</kbd> Focus search</div>
+        <div class="sc-item"><kbd>Esc</kbd> Close panel · clear selection</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ Image Lightbox ═══════════ -->
+  <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button id="lightbox-close" class="lb-close" aria-label="Close image viewer"><span class="ic-wrap" data-icon="x"></span></button>
+    <figure class="lb-figure">
+      <img id="lightbox-img" alt="" draggable="false" />
+      <figcaption id="lightbox-caption" class="lb-caption"></figcaption>
+    </figure>
+  </div>
+
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
