@@ -1,5 +1,7 @@
 # LightMail
 
+![LightMail](./LightMail.png)
+
 Lightweight local email client. Express + SQLite backend, vanilla-JS (ES modules, no build step) SPA frontend, IMAP sync (ImapFlow) + SMTP send (nodemailer).
 
 Author: Ritche Gerona
