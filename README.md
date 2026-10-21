@@ -28,7 +28,13 @@ Author: Ritche Gerona
    npm install
    ```
 
-2. Create a `.env` file in the project root:
+2. Create a `.env` file in the project root (or copy the provided template):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   At minimum, set a 64-hex-char encryption key:
 
    ```bash
    ENCRYPTION_KEY=<64 hex chars>   # required — server exits if missing
