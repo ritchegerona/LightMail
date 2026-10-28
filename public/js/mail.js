@@ -246,6 +246,7 @@ export function renderList() {
           <span class="subject-line">${escapeHtml(e.subject || '(no subject)')}</span>
           ${e.has_attachments ? `<span class="att-ic" title="Has attachments">${icon('clip')}</span>` : ''}
         </div>
+        ${labelChips}
         <div class="snippet">${escapeHtml(snippet(e.body_text || e.body_html))}</div>
       </div>
       <button class="row-flag ${flagged ? 'on' : ''}" data-flag="${e.id}" aria-label="${flagged ? 'Unstar' : 'Star'}" title="${flagged ? 'Unstar' : 'Star'}">${icon('star')}</button>
