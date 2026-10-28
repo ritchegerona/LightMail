@@ -331,4 +331,90 @@ describe('Attachment sync metadata', () => {
     expect(row.has_attachments).toBe(1);
     await db.deleteAccount(accId);
   });
+
+  test('replaceAttachmentsForEmail handles multiple attachments', async () => {
+    const acc = await request(app)
+      .post('/api/accounts')
+      .send({ email: 'multiatts@example.com', password: 'pw', imap_host: 'i', imap_port: 993, smtp_host: 's', smtp_port: 587 });
+    const accId = acc.body.id;
+    await db.addMailbox(accId, 'INBOX');
+    const box = await db.getMailbox(accId, 'INBOX');
+    const emailId = await db.addEmail({ account_id: accId, mailbox_id: box.id,
+      message_id: box.id + ':42', subject: 'multi att', date_received: Date.now(), is_read: 0 });
+    await db.replaceAttachmentsForEmail(emailId, [
+      { part_id: '1', filename: 'doc1.pdf', mime_type: 'application/pdf', size: 5000, imap_uid: 42 },
+      { part_id: '2', filename: 'doc2.xlsx', mime_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 8000, imap_uid: 42 },
+      { part_id: '3', filename: 'image.png', mime_type: 'image/png', size: 2000, imap_uid: 42 }
+    ]);
+    const list = await db.getAttachments(emailId);
+    expect(list).toHaveLength(3);
+    const filenames = list.map(a => a.filename).sort();
+    expect(filenames).toEqual(['doc1.pdf', 'doc2.xlsx', 'image.png']);
+    await db.deleteAccount(accId);
+  });
+
+  test('replaceAttachmentsForEmail re-sync overwrites existing attachments', async () => {
+    const acc = await request(app)
+      .post('/api/accounts')
+      .send({ email: 'reclaim@example.com', password: 'pw', imap_host: 'i', imap_port: 993, smtp_host: 's', smtp_port: 587 });
+    const accId = acc.body.id;
+    await db.addMailbox(accId, 'INBOX');
+    const box = await db.getMailbox(accId, 'INBOX');
+    const emailId = await db.addEmail({ account_id: accId, mailbox_id: box.id,
+      message_id: box.id + ':15', subject: 're-sync test', date_received: Date.now(), is_read: 0 });
+    // First sync: single attachment
+    await db.replaceAttachmentsForEmail(emailId, [
+      { part_id: '5', filename: 'old.pdf', mime_type: 'application/pdf', size: 1000, imap_uid: 15 }
+    ]);
+    let list = await db.getAttachments(emailId);
+    expect(list).toHaveLength(1);
+    expect(list[0].filename).toBe('old.pdf');
+    // Second sync: replace with three attachments
+    await db.replaceAttachmentsForEmail(emailId, [
+      { part_id: '1', filename: 'new1.txt', mime_type: 'text/plain', size: 100, imap_uid: 15 },
+      { part_id: '2', filename: 'new2.txt', mime_type: 'text/plain', size: 200, imap_uid: 15 },
+      { part_id: '3', filename: 'new3.txt', mime_type: 'text/plain', size: 300, imap_uid: 15 }
+    ]);
+    list = await db.getAttachments(emailId);
+    expect(list).toHaveLength(3);
+    const filenames = list.map(a => a.filename).sort();
+    expect(filenames).toEqual(['new1.txt', 'new2.txt', 'new3.txt']);
+    // Old attachment is gone
+    expect(list.some(a => a.filename === 'old.pdf')).toBe(false);
+    await db.deleteAccount(accId);
+  });
+
+  test('replaceAttachmentsForEmail handles attachment without explicit filename', async () => {
+    const acc = await request(app)
+      .post('/api/accounts')
+      .send({ email: 'nofile@example.com', password: 'pw', imap_host: 'i', imap_port: 993, smtp_host: 's', smtp_port: 587 });
+    const accId = acc.body.id;
+    await db.addMailbox(accId, 'INBOX');
+    const box = await db.getMailbox(accId, 'INBOX');
+    const emailId = await db.addEmail({ account_id: accId, mailbox_id: box.id,
+      message_id: box.id + ':7', subject: 'nameless att', date_received: Date.now(), is_read: 0 });
+    // Simulate an attachment part with disposition but no filename field
+    await db.replaceAttachmentsForEmail(emailId, [
+      { part_id: '3', mime_type: 'application/octet-stream', size: 4242, imap_uid: 7 }
+    ]);
+    const list = await db.getAttachments(emailId);
+    expect(list).toHaveLength(1);
+    // Filename should default to something reasonable when missing
+    expect(list[0].filename).toBeDefined();
+    await db.deleteAccount(accId);
+  });
+
+  test('getAttachments returns empty array for email with no attachments', async () => {
+    const acc = await request(app)
+      .post('/api/accounts')
+      .send({ email: 'noattch@example.com', password: 'pw', imap_host: 'i', imap_port: 993, smtp_host: 's', smtp_port: 587 });
+    const accId = acc.body.id;
+    await db.addMailbox(accId, 'INBOX');
+    const box = await db.getMailbox(accId, 'INBOX');
+    const emailId = await db.addEmail({ account_id: accId, mailbox_id: box.id,
+      message_id: box.id + ':3', subject: 'plain text only', date_received: Date.now(), is_read: 0 });
+    const list = await db.getAttachments(emailId);
+    expect(list).toHaveLength(0);
+    await db.deleteAccount(accId);
+  });
 });
