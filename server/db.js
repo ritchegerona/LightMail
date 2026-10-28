@@ -408,6 +408,15 @@ async function markDeleted(id, isDeleted) {
   await run('UPDATE emails SET is_deleted = ? WHERE id = ?', [isDeleted ? 1 : 0, id]);
 }
 
+async function setLabels(emailId, accountId, labels) {
+  await run('UPDATE emails SET labels = ? WHERE id = ? AND account_id = ?', [labels, emailId, accountId]);
+}
+
+async function getEmailLabels(emailId) {
+  const row = await get('SELECT labels FROM emails WHERE id = ?', [emailId]);
+  return row ? row.labels : '';
+}
+
 async function searchEmails(accountId, query, limit = 50, offset = 0) {
   const q = `%${query}%`;
   return all(LIST_SELECT + `

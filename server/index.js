@@ -366,6 +366,67 @@ app.patch('/api/emails/:id/delete', async (req, res) => {
   res.json({ success: true });
 });
 
+// ── Label APIs ──
+app.get('/api/emails/:id/labels', async (req, res) => {
+  const emailId = validateEmailId(req.params.id);
+  if (!emailId) return res.status(400).json({ error: 'Invalid email ID' });
+  try {
+    const labels = await db.getEmailLabels(emailId);
+    res.json({ labels });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/emails/:id/labels', async (req, res) => {
+  const emailId = validateEmailId(req.params.id);
+  if (!emailId) return res.status(400).json({ error: 'Invalid email ID' });
+  const { labels } = req.body;
+  if (typeof labels !== 'string') return res.status(400).json({ error: 'Labels must be a string' });
+  try {
+    const account = await db.getAccount(emailId);
+    if (!account) return res.status(404).json({ error: 'Account not found' });
+    await db.setLabels(emailId, account.id, labels);
+    res.json({ success: true, labels });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/accounts/:id/labels', async (req, res) => {
+  const accountId = validateAccountId(req.params.id);
+  if (!accountId) return res.status(400).json({ error: 'Invalid account ID' });
+  try {
+    const emails = await db.getEmails(accountId);
+    const allLabels = new Set();
+    for (const email of emails) {
+      const lbls = await db.getEmailLabels(email.id);
+      if (lbls) {
+        lbls.split(',').forEach(l => { if (l.trim()) allLabels.add(l.trim()); });
+      }
+    }
+    res.json({ labels: Array.from(allLabels).sort() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/accounts/:id/labels', async (req, res) => {
+  const accountId = validateAccountId(req.params.id);
+  if (!accountId) return res.status(400).json({ error: 'Invalid account ID' });
+  const { labels } = req.body;
+  if (typeof labels !== 'string') return res.status(400).json({ error: 'Labels must be a string' });
+  try {
+    await run(
+      'UPDATE emails SET labels = ? WHERE account_id = ?',
+      [labels, accountId]
+    );
+    res.json({ success: true, labels });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Permanent delete (single email)
 app.delete('/api/emails/:id', async (req, res) => {
   const emailId = validateEmailId(req.params.id);

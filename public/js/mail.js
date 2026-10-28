@@ -361,6 +361,7 @@ function renderDetail() {
   const from = email.from_address || 'Unknown';
   const flagged = !!email.is_flagged;
   const inTrash = state.currentMailbox === 'TRASH';
+  const labels = email.labels ? email.labels.split(',').map(l => l.trim()).filter(Boolean) : [];
 
   const ccLine = email.cc_address ? `<div class="cc-line">cc ${escapeHtml(email.cc_address)}</div>` : '';
   const bccLine = email.bcc_address ? `<div class="cc-line">bcc ${escapeHtml(email.bcc_address)}</div>` : '';
